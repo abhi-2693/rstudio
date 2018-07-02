@@ -16,11 +16,15 @@
 #
 
 # Installs Qt via the online installer at the location in $QT_SDK_DIR.
+#
+# Set QT_SDK_CUSTOM to download and extract a custom-built Qt archive for 
+# OS configs where the Qt-supplied binaries are not compatible.
+#
 # If no location provided, checks against a set of common locations and installs
 # if not found.
 
 QT_VERSION=5.11.1
-QT_SDK_BINARY=qt-unified-linux-x64-3.0.4-online.run
+QT_SDK_BINARY=qt-unified-linux-x64-3.0.5-online.run
 QT_SDK_URL=https://s3.amazonaws.com/rstudio-buildtools/$QT_SDK_BINARY
 QT_SCRIPT=/tmp/qt-noninteractive-install-linux.qs
 
@@ -107,22 +111,34 @@ fi
 
 if [ ! -e "$QT_SDK_DIR" ] && [ ! -e "$QT_SDK_DIR2" ] && [ ! -e "$QT_SDK_DIR3" ]
 then
-   # download and install
-   wget $QT_SDK_URL -O /tmp/$QT_SDK_BINARY
-   chmod u+x /tmp/$QT_SDK_BINARY
-   write_qt_script
+   if [ -z "$QT_SDK_CUSTOM" ]; then
+      # download and install via Qt online installer
+      wget $QT_SDK_URL -O /tmp/$QT_SDK_BINARY
+      chmod u+x /tmp/$QT_SDK_BINARY
+      write_qt_script
 
-   # online installer sometimes fails, keep trying...
-   retryCounter=0
-   while [ ! -e "$QT_SDK_DIR" ] && [ ! -e "$QT_SDK_DIR2" ] && [ ! -e "$QT_SDK_DIR3" ] && [ $retryCounter -le 5 ] 
-   do
-      echo "Installing Qt, this will take a while."
-      echo " - Ignore warnings about QtAccount credentials."
-      echo " - Do not click on the setup interface, it is controlled by a script."
-      /tmp/$QT_SDK_BINARY --script $QT_SCRIPT
-      ((retryCounter++))
-   done
-   rm -f /tmp/$QT_SDK_BINARY $QT_SCRIPT
+      # online installer sometimes fails, keep trying...
+      retryCounter=0
+      while [ ! -e "$QT_SDK_DIR" ] && [ ! -e "$QT_SDK_DIR2" ] && [ ! -e "$QT_SDK_DIR3" ] && [ $retryCounter -le 5 ] 
+      do
+         echo "Installing Qt, this will take a while."
+         echo " - Ignore warnings about QtAccount credentials."
+         echo " - Do not click on the setup interface, it is controlled by a script."
+         /tmp/$QT_SDK_BINARY --script $QT_SCRIPT
+         ((retryCounter++))
+      done
+      rm -f /tmp/$QT_SDK_BINARY $QT_SCRIPT
+   else
+      QT_SDK_BINARY=$QT_SDK_CUSTOM
+      QT_SDK_URL=https://s3.amazonaws.com/rstudio-buildtools/$QT_SDK_BINARY
+      
+      # download and install
+      wget $QT_SDK_URL -O /tmp/$QT_SDK_BINARY
+      cd `dirname $QT_SDK_DIR`
+      tar xzf /tmp/$QT_SDK_BINARY
+      rm /tmp/$QT_SDK_BINARY
+   fi
+      
    if [ ! -e "$QT_SDK_DIR" ] && [ ! -e "$QT_SDK_DIR2" ] && [ ! -e "$QT_SDK_DIR3" ]; then
       echo "Error: Unable to install Qt, run script again or install manually." 
       exit 1

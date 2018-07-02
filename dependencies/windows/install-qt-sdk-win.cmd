@@ -3,7 +3,7 @@
 setlocal EnableDelayedExpansion
 
 set QT_VERSION=5.11.1
-set QT_FILE=qt-unified-windows-x86-3.0.4-online.exe
+set QT_FILE=qt-unified-windows-x86-3.0.5-online.exe
 
 call :DetectQt foundQt
 if "!foundQt!" == "false" (
