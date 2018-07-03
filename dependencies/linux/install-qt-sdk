@@ -13,18 +13,31 @@
 # MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE. Please refer to the
 # AGPL (http://www.gnu.org/licenses/agpl-3.0.txt) for more details.
 #
-#
 
-# Installs Qt via the online installer at the location in $QT_SDK_DIR.
-#
-# Set QT_SDK_CUSTOM to download and extract a custom-built Qt archive for 
-# OS configs where the Qt-supplied binaries are not compatible.
-#
-# If no location provided, checks against a set of common locations and installs
-# if not found.
+if [ -z "$QT_VERSION" ]; then
+    QT_VERSION=5.11.1
+fi
+if [ -z "$QT_SDK_BINARY" ]; then
+    QT_SDK_BINARY=qt-unified-linux-x64-3.0.5-online.run
+fi
+if [ -z "$QT_PACKAGES" ]; then
+    QT_PACKAGES=qt.qt5.5111.gcc_64,qt.qt5.5111.qtwebengine,qt.qt5.5111.qtwebengine.gcc_64
+fi
+if [ -z "$QT_SDK_CUSTOM" ]; then
+    echo Using online Qt installer
+else
+    echo Using custom Qt package: $QT_SDK_CUSTOM
+fi
+if [ -z "$QT_SDK_DIR" ]; then
 
-QT_VERSION=5.11.1
-QT_SDK_BINARY=qt-unified-linux-x64-3.0.5-online.run
+   # Qt install root if path not supplied
+   QT_SDK_DIR=~/Qt${QT_VERSION}
+   
+   # other locations checked for existing installation
+   QT_SDK_DIR2=~/Qt/Qt${QT_VERSION}
+   QT_SDK_DIR3=~/Qt/${QT_VERSION}
+fi
+
 QT_SDK_URL=https://s3.amazonaws.com/rstudio-buildtools/$QT_SDK_BINARY
 QT_SCRIPT=/tmp/qt-noninteractive-install-linux.qs
 
@@ -66,11 +79,15 @@ Controller.prototype.TargetDirectoryPageCallback = function()
 
 Controller.prototype.ComponentSelectionPageCallback = function() {
     var widget = gui.currentPageWidget();
-     
-    widget.selectComponent("qt.qt5.5111.gcc_64");
-    widget.selectComponent("qt.qt5.5111.qtwebengine");
-    widget.selectComponent("qt.qt5.5111.qtwebengine.gcc_64");
-    widget.deselectComponent("qt.qt5.5111.src");
+    
+    var packages = trim("$QT_PACKAGES").split(",");
+    if (packages.length > 0 && packages[0] !== "") {
+        widget.deselectAll();
+        for (var i in packages) {
+            var pkg = trim(packages[i]);
+            widget.selectComponent(pkg);
+        }
+    }
     gui.clickButton(buttons.NextButton);
 }
 
@@ -97,17 +114,6 @@ Controller.prototype.FinishedPageCallback = function() {
 }
 EOF
 }
-
-# set Qt SDK dir if not already defined
-if [ -z "$QT_SDK_DIR" ]; then
-
-   # Qt install root if path not supplied
-   QT_SDK_DIR=~/Qt${QT_VERSION}
-   
-   # other locations checked for existing installation
-   QT_SDK_DIR2=~/Qt/Qt${QT_VERSION}
-   QT_SDK_DIR3=~/Qt/${QT_VERSION}
-fi
 
 if [ ! -e "$QT_SDK_DIR" ] && [ ! -e "$QT_SDK_DIR2" ] && [ ! -e "$QT_SDK_DIR3" ]
 then
