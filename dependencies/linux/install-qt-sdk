@@ -132,8 +132,8 @@ then
       while [ ! -e "$QT_SDK_DIR" ] && [ ! -e "$QT_SDK_DIR2" ] && [ ! -e "$QT_SDK_DIR3" ] && [ $retryCounter -le 5 ] 
       do
          echo "Installing Qt, this will take a while."
-         echo " - Ignore warnings about QtAccount credentials."
-         echo " - Do not click on the setup interface, it is controlled by a script."
+         echo " - Ignore warnings about QtAccount credentials and/or XDG_RUNTIME_DIR."
+         echo " - Do not click on any Qt setup dialogs, it is controlled by a script."
          /tmp/$QT_SDK_BINARY --script $QT_SCRIPT
          ((retryCounter++))
       done
