@@ -9,7 +9,7 @@ set QT_SCRIPT=qt-noninteractive-install-win.qs
 
 call :DetectQt foundQt
 if "!foundQt!" == "false" (
-  wget %WGET_ARGS% %QT_SDK_URL%
+  wget -c --no-check-certificate %QT_SDK_URL%
   echo "Installing Qt, this will take a while."
   echo "Ignore warnings about QtAccount credentials."
   echo "Do not click on the setup interface, it is controlled by a script."
