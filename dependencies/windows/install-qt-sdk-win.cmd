@@ -3,16 +3,18 @@
 setlocal EnableDelayedExpansion
 
 set QT_VERSION=5.11.1
-set QT_FILE=qt-unified-windows-x86-3.0.5-online.exe
+set QT_SDK_BINARY=qt-unified-windows-x86-3.0.5-online.exe
+set QT_SDK_URL=https://s3.amazonaws.com/rstudio-buildtools/$QT_SDK_BINARY
+set QT_SCRIPT=qt-noninteractive-install-win.qs
 
 call :DetectQt foundQt
 if "!foundQt!" == "false" (
-  wget %WGET_ARGS% %BASEURL%%QT_FILE%
+  wget %WGET_ARGS% %QT_SDK_URL%
   echo "Installing Qt, this will take a while."
   echo "Ignore warnings about QtAccount credentials."
   echo "Do not click on the setup interface, it is controlled by a script."
-  %QT_FILE% --script qt-noninteractive-install-win.qs
-  del %QT_FILE%
+  %QT_SDK_BINARY% --script %QT_SCRIPT%
+  del %QT_SDK_BINARY%
 )
 call :DetectQt foundQt
 if "!foundQt!" == "false" (
