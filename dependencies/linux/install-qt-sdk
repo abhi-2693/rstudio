@@ -79,7 +79,11 @@ Controller.prototype.TargetDirectoryPageCallback = function()
 
 Controller.prototype.ComponentSelectionPageCallback = function() {
     var widget = gui.currentPageWidget();
-    
+
+    function trim(str) {
+        return str.replace(/^ +/,"").replace(/ *$/,"");
+    }
+
     var packages = trim("$QT_PACKAGES").split(",");
     if (packages.length > 0 && packages[0] !== "") {
         widget.deselectAll();
