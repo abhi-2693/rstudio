@@ -68,7 +68,7 @@ if(NOT WIN32)
    endif()
 else()
    set(QT_VERSION "5.11.1")
-   set(QT_VERSION_SUDIR "${QT_VERSION}")   
+   set(QT_VERSION_SUBDIR "${QT_VERSION}")   
    if(NOT QT_QMAKE_EXECUTABLE)
 
       set(QMAKE_QT50_SDK "C:\\Qt\\Qt${QT_VERSION}\\${QT_VERSION_SUBDIR}\\msvc2017_64")
