@@ -28,9 +28,6 @@ set LIBCLANG_VERSION=5.0.2
 set LIBCLANG_NAME=libclang-windows-%LIBCLANG_VERSION%
 set LIBCLANG_FILE=%LIBCLANG_NAME%.zip
 
-set QT_VERSION=5.11.1
-set QT_FILE=qt-unified-windows-x86-3.0.4-online.exe
-
 if not exist gnudiff (
   wget %WGET_ARGS% "%BASEURL%%GNUDIFF_FILE%"
   mkdir gnudiff
