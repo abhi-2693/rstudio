@@ -36,9 +36,9 @@ set BUILD_DIR=build
 if "%CMAKE_BUILD_TYPE%" == "" set CMAKE_BUILD_TYPE=Release
 if "%CMAKE_BUILD_TYPE%" == "Debug" set BUILD_DIR=build-debug
 
-REM skip compiler test; do this to allow building in hyper-v containers despite
+REM Experiment: skip compiler test; attempt to allow building in hyper-v containers despite
 REM problem described here: https://github.com/docker/for-win/issues/829
-set CMAKE_C_COMPILER_WORKS=1
+REM set CMAKE_C_COMPILER_WORKS=1
 
 REM perform build 
 cd "%PACKAGE_DIR%"
