@@ -36,10 +36,6 @@ function Controller() {
         gui.clickButton(buttons.NextButton);
     })
     installer.setMessageBoxAutomaticAnswer("cancelInstallation", QMessageBox.Yes);
-    var silent = installer.environmentVariable("RSTUDIO_SILENT_QT_INSTALL");
-    if (silent !== "") {
-        gui.setSilent(true)
-    }
 }
 
 Controller.prototype.WelcomePageCallback = function() {
